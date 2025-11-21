@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palindrome Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        light: {
+                            background: '#FAFAF8',
+                            text: '#333333',
+                            secondary: '#555555',
+                        },
+                        dark: {
+                            background: '#121212',
+                            text: '#E0E0E0',
+                            secondary: '#B0B0B0',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="font-sans bg-light-background text-light-text dark:bg-dark-background dark:text-dark-text min-h-screen transition-colors duration-300">
+    <!-- Theme Toggle -->
+    <div class="fixed top-4 right-4 z-10">
+        <button id="themeToggle" class="bg-white dark:bg-gray-800 rounded-full p-2 shadow-md hover:shadow-lg transition-shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-500 dark:text-gray-300 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container mx-auto px-4 py-12 flex flex-col items-center justify-center min-h-screen">
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4 font-serif">Palindrome Checker</h1>
+            <p class="text-light-secondary dark:text-dark-secondary text-lg max-w-2xl mx-auto">
+                Enter a word or phrase to check if it reads the same forwards and backwards.
+            </p>
+        </header>
+
+        <main class="w-full max-w-md">
+            <!-- Input Section -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mb-8">
+                <div class="mb-6">
+                    <label for="input" class="block text-sm font-medium text-light-secondary dark:text-dark-secondary mb-2">
+                        Enter text to check:
+                    </label>
+                    <input 
+                        id="input" 
+                        type="text" 
+                        placeholder="Type something..." 
+                        class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-transparent transition-colors"
+                        onkeypress="handleKeyPress(event)"
+                    >
+                </div>
+                
+                <button 
+                    onclick="check()" 
+                    class="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all"
+                >
+                    Check Palindrome
+                </button>
+            </div>
+
+            <!-- Result Display -->
+            <div id="result" class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 hidden">
+                <h2 class="text-xl font-semibold mb-4 text-center">Result</h2>
+                <div class="flex flex-col items-center justify-center">
+                    <div id="resultIcon" class="text-6xl mb-4"></div>
+                    <p id="resultText" class="text-lg text-center"></p>
+                    <div id="originalText" class="mt-4 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-full text-center font-mono"></div>
+                    <div id="reversedText" class="mt-2 p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-full text-center font-mono"></div>
+                </div>
+            </div>
+
+            <!-- Info Section -->
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 mt-6">
+                <h2 class="text-xl font-semibold mb-4">What is a Palindrome?</h2>
+                <p class="text-light-secondary dark:text-dark-secondary">
+                    A palindrome is a word, phrase, number, or other sequence of characters that reads the same forward and backward (ignoring spaces, punctuation, and capitalization).
+                </p>
+                <div class="mt-4">
+                    <h3 class="font-semibold mb-2">Examples:</h3>
+                    <ul class="list-disc list-inside text-light-secondary dark:text-dark-secondary space-y-1">
+                        <li>racecar</li>
+                        <li>A man, a plan, a canal, Panama!</li>
+                        <li>Madam</li>
+                        <li>Never odd or even</li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-12 text-center text-light-secondary dark:text-dark-secondary">
+            <p>© 2025 • Developed by <a href="https://www.linkedin.com/in/suhaib-nadakkavil" target="_blank"
+                    class="text-light-secondary hover:text-light-text dark:text-dark-secondary dark:hover:text-dark-text underline transition-colors">msn4u</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const input = document.getElementById("input");
+        const resultDiv = document.getElementById("result");
+        const resultIcon = document.getElementById("resultIcon");
+        const resultText = document.getElementById("resultText");
+        const originalText = document.getElementById("originalText");
+        const reversedText = document.getElementById("reversedText");
+        const themeToggle = document.getElementById("themeToggle");
+        
+        // Theme Management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'system';
+            const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            if (savedTheme === 'dark' || (savedTheme === 'system' && systemDark)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            
+            localStorage.setItem('theme', savedTheme);
+        }
+        
+        function toggleTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+        
+        // Palindrome Functions
+        function reverseString(str) {
+            return str.split("").reverse().join("");
+        }
+        
+        function cleanString(str) {
+            // Remove spaces, punctuation, and convert to lowercase
+            return str.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        }
+        
+        function check() {
+            const value = input.value.trim();
+            
+            if (value === "") {
+                showResult(false, "Please enter some text to check.");
+                return;
+            }
+            
+            const cleanedValue = cleanString(value);
+            const reverse = reverseString(cleanedValue);
+            
+            if (cleanedValue === reverse) {
+                showResult(true, `"${value}" is a palindrome!`);
+            } else {
+                showResult(false, `"${value}" is not a palindrome.`);
+            }
+            
+            // Show original and reversed text
+            originalText.textContent = `Original: ${value}`;
+            reversedText.textContent = `Reversed: ${reverseString(value)}`;
+            
+            input.value = "";
+        }
+        
+        function showResult(isPalindrome, message) {
+            resultDiv.classList.remove("hidden");
+            
+            if (isPalindrome) {
+                resultIcon.innerHTML = "✅";
+                resultIcon.classList.add("text-green-500");
+                resultIcon.classList.remove("text-red-500");
+                resultText.classList.add("text-green-600", "dark:text-green-400");
+                resultText.classList.remove("text-red-600", "dark:text-red-400");
+            } else {
+                resultIcon.innerHTML = "❌";
+                resultIcon.classList.add("text-red-500");
+                resultIcon.classList.remove("text-green-500");
+                resultText.classList.add("text-red-600", "dark:text-red-400");
+                resultText.classList.remove("text-green-600", "dark:text-green-400");
+            }
+            
+            resultText.textContent = message;
+            
+            // Scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                check();
+            }
+        }
+        
+        // Event Listeners
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // Initialize
+        initTheme();
+    </script>
+</body>
+</html>
